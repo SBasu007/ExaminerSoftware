@@ -1,0 +1,45 @@
+<%- include("../partials/header.ejs") %>
+<% if (bool === true) { %>
+    <h2>There is no exam</h2>
+<% } else { %>
+    <div class="htable">
+        <h4><strong>School Name:</strong> <span><%= display[0].name %></span></h4>
+        <h4><strong>Examiner Name:</strong> <span><%= display[0].exam_taker %></span></h4>
+        <h4><strong>Session:</strong> <span><%= display[0].session %></span></h4>
+        <h4><strong>Month:</strong> <span><%= display[0].month %></span></h4>
+        <% if (display[0].date === '') { %>
+            <h4><strong>Date:</strong> <span>Not Entered</span></h4>
+        <% } else { %>
+            <h4><strong>Date:</strong> <span><%= display[0].date %></span></h4>
+        <% } %>
+        <h4><strong>Fees: </strong> <span>Rs. <%= display[0].fees %></span></h4>
+        <h4><strong>Food:</strong> <span>Rs. <%= display[0].food %></span></h4>
+        <h4><strong>Travel:</strong> <span>Rs. <%= display[0].transport %></span></h4>
+        <h4><strong>Direct Candidates:</strong> <span><%= display[0].direct_candidate %></span></h4>
+        <h4><strong>Direct Candidate Fee:</strong> <span>Rs. <%= display[0].direct_candidate_fees %></span></h4>
+        <form class="editReportExamInitiate" action="/editReportExamInitiate" method="post">
+            <div class="form-group">
+                <input type="hidden" class="form-control" id="name" name="name" value="<%= display[0].name %>">
+                <input type="hidden" class="form-control" id="examid" name="examid" value="<%= display[0].id %>">
+                <input type="hidden" class="form-control" id="date" name="date" value="<%= display[0].date %>">
+                <input type="hidden" class="form-control" id="fees" name="fees" value="<%= display[0].fees %>">
+                <input type="hidden" class="form-control" id="food" name="food" value="<%= display[0].food %>">
+                <input type="hidden" class="form-control" id="travel" name="travel" value="<%= display[0].transport %>">
+                <input type="hidden" class="form-control" id="direct_candidate" name="direct_candidate" value="<%= display[0].direct_candidate %>">
+                <input type="hidden" class="form-control" id="direct_candidate_fees" name="direct_candidate_fees" value="<%= display[0].direct_candidate_fees %>">
+                <div class="button-submit">
+                    <button type="submit" class="btn btn-primary">Add Exam Details</button>
+                </div>
+            </div>
+        </form>
+        <form class="examinerReportByCode" action="/examinerReportByCode" method="post">
+            <div class="form-group">
+                <input type="hidden" class="form-control" id="code" name="code" value="<%= display[0].examiner_code %>">
+                <div class="button-submit">
+                    <button type="submit" class="btn btn-primary">Back</button>
+                </div>
+            </div>
+        </form>
+    </div>
+<% } %>
+<%- include("../partials/footer.ejs") %>

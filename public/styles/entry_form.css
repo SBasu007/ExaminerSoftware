@@ -1,0 +1,40 @@
+body{
+  margin:0px;
+  padding-top:40px;
+}
+.form{
+  background-color: lightblue;
+  padding: 20px 40px 20px 40px ;
+  border: 1px solid #000;
+  width:30%;
+  display: flex;
+  align-items: center;
+}
+label{
+  display: block;
+}
+input[type="text"]{
+  height:1.5rem;
+  width:45vh;
+  margin:5px 5px 5px 0;
+  border-radius:0px;
+  border-bottom: 1px solid #253b70;
+}
+.btn{
+  background-color:#253b70 ;
+  color:white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top:20px;
+
+}
+.button-submit{
+  width :45vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column
+}
+h3{
+  text-align: center;
+}

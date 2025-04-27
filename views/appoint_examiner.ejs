@@ -1,0 +1,39 @@
+<%- include("partials/header.ejs")%>
+<% if(bool === true){ %>
+    <h2>No examiner available</h2>
+  <% } else {%>  
+    <table class="table table-primary table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Zone</th>
+            <th scope="col">Name</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Address</th>
+            <th scope="col">School Name</th>
+            <th scope="col">Assigned Months</th>
+            <th scope="col">Select</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% for(var i=0;i<display.length;i++) { %>  
+          <tr>
+            <td><%= display[i].zone %></td>
+            <td><%= display[i].name %></td>
+            <td><%= display[i].phone %></td>
+            <td><%= display[i].address %></td>
+            <td>School name</td>
+            <td>months occupied</td>
+            <td><form class="selectExaminer" action="/selectExaminer" method="post">
+                <div class="form-group">
+                    <input type="hidden" class="form-control" id="examinercode" name="examinercode" value="<%= display[i].code %>">
+                    <input type="hidden" class="form-control" id="examid" name="examid" value="<%= examid %>">
+                    <button type="submit" class="btn btn-primary" style="margin : 0px">Select</button>
+                </div>
+            </form>
+            </td>
+          </tr>
+        <% } %>
+        </tbody>
+      </table>
+<% } %>  
+<%- include("partials/footer.ejs")%>

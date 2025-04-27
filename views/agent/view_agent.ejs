@@ -1,0 +1,16 @@
+<%- include("../partials/header.ejs")%>
+<div class="flex-container">
+    <h3 style="margin-bottom:20px ;">Enter detail for particular agent by code </h3>
+    <div class="htable" style="margin-bottom: 15px; width:70%">
+        <form class="viewAgentByCode" action="/viewAgentByCode" method="post">
+            <div class="form-group">
+                <label for="code">Enter Agent Code: </label>
+                <input type="text" class="form-control" id="code" name="code">
+                <div class="button-submit">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<%- include("../partials/footer.ejs")%>

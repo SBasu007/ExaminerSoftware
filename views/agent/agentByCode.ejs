@@ -1,0 +1,38 @@
+<%- include("../partials/header.ejs")%>
+<% if(bool === true){ %>
+    <h2>There is no agent by this code.</h2>
+  <% } else {%>  
+    <div class="htable">
+        <h4>Agent Code: <span class="h4"><%= code %></span></h4>
+        <h4>Name: <span class="h4"><%= name %></span></h4>
+        <h4>Phone: <span class="h4"><%= phone %></span></h4>
+        <form class="viewAgentByAgentCode" action="/viewAgentByAgentCode" method="post">
+          <div class="form-group">
+              <input type="hidden" class="form-control" id="code" name="code" value="<%= code %>">
+              <div class="button-submit">
+                  <button type="submit" class="btn btn-primary">Show all exams</button>
+              </div>
+          </div>
+      </form>
+      <form class="editAgentInitiate" action="/editAgentInitiate" method="post">
+        <div class="form-group">
+            <input type="hidden" class="form-control" id="code" name="code" value="<%= code %>">
+            <input type="hidden" class="form-control" id="name" name="name" value="<%= name %>">
+            <input type="hidden" class="form-control" id="phone" name="phone" value="<%= phone %>">
+            <div class="button-submit">
+                <button type="submit" class="btn btn-primary">Edit Agent Details</button>
+            </div>
+        </div>
+    </form>
+    <form class="deleteAgent" action="/deleteAgent" method="post">
+      <div class="form-group">
+          <input type="hidden" class="form-control" id="code" name="code" value="<%= code %>">
+          <div class="button-submit">
+              <button type="submit" class="btn btn-primary">Delete Agent</button>
+          </div>
+      </div>
+  </form>
+
+    </div>    
+<% } %>  
+<%- include("../partials/footer.ejs")%>

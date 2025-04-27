@@ -1,0 +1,63 @@
+<%- include("../partials/header.ejs")%>
+<% if(bool === true){ %>
+    <h2>This agent has not made any collecions</h2>
+<% } else {%>  
+    <div class="container">
+        <h3>List of all exam form collections by <%= display[0].agentname %></h3>
+        
+        <table class="table table-primary table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Serial</th>
+                    <th scope="col">Zone</th>
+                    <th scope="col">School Name</th>
+                    <th scope="col">Session</th>
+                    <th scope="col">Reporting Date</th>
+                    <th scope="col">Reporting Month</th>
+                    <th scope="col">Total forms</th>
+                    <th scope="col">Total collection</th>
+                    <th scope="col">Agent Commission</th>
+                    <th scope="col">Agent Paid</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0;i<display.length;i++) { %>  
+                    <tr>
+                        <td><%= i+1 %></td>
+                        <td><%= display[i].zone %></td>
+                        <td><%= display[i].schoolname %></td>   
+                        <td><%= display[i].session %></td>
+                        <td><%= display[i].date %></td>
+                        <td><%= display[i].month %></td>
+                        <td><%= display[i].forms %></td>
+                        <td>Rs. <%= display[i].collection %></td>
+                        <td>Rs. <%= display[i].agent_commission %></td>
+                        <td>
+                            <% if(display[i].agent_paid === false) { %>
+                                <button type="button" class="status-buttons-danger">Unpaid</button>
+                            <% } else { %>
+                                <button type="button" class="status-buttons-success">Paid</button>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+        <h4>Enter the month to generate report</h4>
+        <form class="generateAgentReport" action="/generateAgentReport" method="post" target="_blank">
+          <input type="text" class="form-control" id="month" name="month">
+          <% var mcount = 0; %>
+          <% for (var i = 0; i < display.length; i++) { %>
+            <% if (display[i].agent_paid === false) { %>
+                <input type="hidden" class="form-control" id="formid<%= i %>" name="formid<%= i %>" value="<%= display[i].id %>">
+                <% mcount = mcount+1 %>
+            <% } %>
+        <% } %>
+          <input type="hidden" class="form-control" id="maxCount" name="maxCount" value="<%= mcount%>">
+          <div class="button-submit">
+              <button type="submit" class="btn btn-primary">Generate Report</button>
+            </div>
+    </form>
+    </div>
+<% } %>  
+<%- include("../partials/footer.ejs")%>

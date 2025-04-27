@@ -1,0 +1,36 @@
+<%- include("../partials/header.ejs")%>
+    <div class="htable" style="padding-top: 10px;">
+        <h3>Add exam details for final report generation</h3>  
+        <form class="editExamReport" action="/editExamReport" method="post">
+            <input type="hidden" class="form-control" id="examid" name="examid" value="<%= examid %>">
+            <h5 style="margin-top: 10px;"><strong>School Name :</strong> <span><%= name %></span></h5>
+            <div class="form-group">
+                <label for="code">Date: </label>
+                <input type="text" class="form-control" id="date" name="date" placeholder="<%= date %>">
+            </div>
+            <div class="form-group">
+                <label for="fees">Fees: </label>
+                <input type="text" class="form-control" id="fees" name="fees" placeholder="<%= fees %>">
+            </div>
+            <div class="form-group">
+                <label for="food">Food: </label>
+                <input type="text" class="form-control" id="food" name="food" placeholder="<%= food %>">
+            </div>
+            <div class="form-group">
+                <label for="travel">Travel: </label>
+                <input type="text" class="form-control" id="travel" name="travel" placeholder="<%= travel %>">
+            </div>
+            <div class="form-group">
+                <label for="direct_candidate">Direct Candidate: </label>
+                <input type="text" class="form-control" id="direct_candidate" name="direct_candidate" placeholder="<%= direct_candidate %>">
+            </div>
+            <div class="form-group">
+                <label for="direct_candidate_fees">Direct Candidate Fees: </label>
+                <input type="text" class="form-control" id="direct_candidate_fees" name="direct_candidate_fees" placeholder="<%= direct_candidate_fees %>">
+            </div>
+            <div class="button-submit">
+                <button type="submit" class="btn btn-primary">Submit Changes</button>
+            </div>
+            </form>
+            </div>
+<%- include("../partials/footer.ejs")%>

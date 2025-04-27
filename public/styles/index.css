@@ -1,0 +1,67 @@
+.bg-blue{
+    background-color: #253b70!important;;
+}
+.navbar-brand {
+    color: #ffffff; /* White color */
+    font-size: 1.4rem;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  } 
+  .navbar-nav .nav-link {
+    color: #ffffff; /* White color */
+  }
+  .footer{
+    background-color: black;
+    height:20px;
+    width:100%
+  }
+  .htable{
+    background-color: #add8e6;
+    padding: 40px 40px 20px 40px ;
+    border: 1px solid #000;
+    width:30%;
+    display:block;
+    word-wrap: break-word; /* Ensure long words break to the next line */
+  overflow-wrap: break-word; /* Ensure long words break to the next line */
+  margin:30px;
+  }
+  .testtable{
+    background-color: #add8e6;
+    padding: 40px 40px 20px 33px ;
+    border: 1px solid #000;
+    width:70%;
+    display:block;
+  }
+  .flex-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .table{
+    margin:20px;
+  }
+  .background{
+    background-color: #9c6beb;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding:20px;
+  }
+  .status-buttons-danger{
+      background-color: #dc3545;
+      color:#ffffff;
+      border:0;
+      border-radius: 5px;
+  }
+  .status-buttons-success{
+    background-color: #198754;
+    color:#ffffff;
+    border:0;
+    border-radius: 5px;
+}
+.table{
+  text-align: center;
+}
+.h4{
+  font-weight:350;
+}

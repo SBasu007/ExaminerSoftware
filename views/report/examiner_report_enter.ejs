@@ -1,0 +1,27 @@
+<%- include("../partials/header.ejs")%>
+<div class="flex-container">
+<h3 style="margin-bottom:20px ;">Enter Examiner detail to display exam list.</h3>
+<div class="testtable" style="margin-bottom: 15px;">
+    <form class="examinerReportByCode" action="/examinerReportByCode" method="post">
+        <div class="form-group">
+            <label for="code">Enter code for particular Examiner: </label>
+            <input type="text" class="form-control" id="code" name="code">
+            <div class="button-submit">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+        </div>
+    </form>
+</div>
+<div class="testtable">
+    <form class="viewExaminerByZone" action="/viewExaminerByZone" method="post">
+        <div class="form-group">
+            <label for="zone">Enter name of Examiner: </label>
+            <input type="text" class="form-control" id="name" name="name">
+            <div class="button-submit">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+        </div>
+    </form>
+</div>
+</div>
+<%- include("../partials/footer.ejs")%>

@@ -1,0 +1,30 @@
+.table, .table th, .table td {
+    text-align: center;
+}
+body{
+    padding: 10px;
+}
+@media print {
+    #printButton {
+        display: none;
+    }
+}
+input{
+    border:0px;
+    border-bottom:2px solid black;
+}
+.signatures{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.sign{
+    text-align: center;
+}
+.title{
+    text-align: center;
+}
+.space{
+    height:50px;
+}

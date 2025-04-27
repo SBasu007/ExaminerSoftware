@@ -1,0 +1,56 @@
+
+<%- include("../partials/header.ejs")%>
+<% if(bool === true){ %>
+    <h2>There is no school by this code.</h2>
+  <% } else {%>  
+    <div class="flex-container">
+        <div class="htable" style="width: 500px;display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <h4 style="text-align: left;">School Code: <%= code %></h4>
+            <h4 style="text-align: left;">School Name: <%= name %></h4>
+            <h4 style="text-align: left;">Phone: <%= phone %></h4>
+            <h4 style="text-align: left;">Address: <%= address %></h4>
+            <h4 style="text-align: left;">Principal: <%= principal %></h4>
+            <h4 style="text-align: left;">Zone: <%= zone %></h4>
+            <h4 style="text-align: left;">Commission(%): <%= commission %></h4>
+            <form class="createExamPage" action="/createExamPage" method="post">
+            <div class="form-group">
+                <input type="hidden" class="form-control" id="code" name="code" value="<%= code %>">
+                <div class="button-submit">
+                    <button type="submit" class="btn btn-primary">Create Exam</button>
+                </div>
+            </div>
+        </form>
+        <form class="viewExamBySchoolCode" action="/viewExamBySchoolCode" method="post">
+            <div class="form-group">
+                <input type="hidden" class="form-control" id="code" name="code" value="<%= code %>">
+                <div class="button-submit">
+                    <button type="submit" class="btn btn-primary">View All Exams</button>
+                </div>
+            </div>
+        </form>
+        <form class="editSchoolInitiate" action="/editSchoolInitiate" method="post">
+            <div class="form-group">
+                <input type="hidden" class="form-control" id="code" name="code" value="<%= code %>">
+                <input type="hidden" class="form-control" id="name" name="name" value="<%= name %>">
+                <input type="hidden" class="form-control" id="phone" name="phone" value="<%= phone %>">
+                <input type="hidden" class="form-control" id="address" name="address" value="<%= address %>">
+                <input type="hidden" class="form-control" id="principal" name="principal" value="<%= principal %>">
+                <input type="hidden" class="form-control" id="zone" name="zone" value="<%= zone %>">
+                <input type="hidden" class="form-control" id="commission" name="commission" value="<%= commission %>">
+                <div class="button-submit">
+                    <button type="submit" class="btn btn-primary">Edit School Details </button>
+                </div>
+            </div>
+        </form>
+        <form class="deleteSchool" action="/deleteSchool" method="post">
+            <div class="form-group">
+                <input type="hidden" class="form-control" id="code" name="code" value="<%= code %>">
+                <div class="button-submit">
+                    <button type="submit" class="btn btn-primary">Delete School</button>
+                </div>
+            </div>
+        </form>
+        </div>
+    </div>    
+<% } %>  
+<%- include("../partials/footer.ejs")%>

@@ -1,0 +1,67 @@
+<%- include("partials/header.ejs")%>
+      <div class="htable">
+        <form class="editExam" action="/editExam" method="post">
+            <input type="hidden" class="form-control" id="examid" name="examid" value="<%= examid %>">
+            <div class="form-group">
+                <label for="code">Session: </label>
+                <input type="text" class="form-control" id="session" name="session" placeholder="<%= session %>">
+            </div>
+            <div class="form-group">
+                <label for="phone">Agent Code:</label>
+                <input type="text" class="form-control" id="agent_code" name="agent_code" placeholder="<%= agent_code %>">
+            </div>
+            <div class="form-group">
+                <label for="phone">Number of forms:</label>
+                <input type="text" class="form-control" id="forms" name="forms" placeholder="<%= forms %>">
+            </div>
+            <div class="form-group">
+                <label for="phone">Total Collection:</label>
+                <input type="text" class="form-control" id="collection" name="collection" placeholder="<%= collection %>">
+            </div>
+            <hr>
+            <div class="form-group">
+                <label for="name">Month:</label>
+                <input type="text" class="form-control" id="month" name="month" maxlength="100" placeholder="<%= month %>">
+            </div>
+            <div class="form-group">
+                <label for="phone">Date:</label>
+                <input type="text" class="form-control" id="date" name="date" maxlength="11" placeholder="<%= date %>">
+            </div>
+            <div class="form-group">
+                <label for="fees">Fees: </label>
+                <input type="text" class="form-control" id="fees" name="fees" placeholder="<%= fees %>">
+            </div>
+            <div class="form-group">
+                <label for="food">Food: </label>
+                <input type="text" class="form-control" id="food" name="food" placeholder="<%= food %>">
+            </div>
+            <div class="form-group">
+                <label for="travel">Travel: </label>
+                <input type="text" class="form-control" id="travel" name="travel" placeholder="<%= travel %>">
+            </div>
+            <div class="form-group">
+                <label for="direct_candidate">Direct Candidate: </label>
+                <input type="text" class="form-control" id="direct_candidate" name="direct_candidate" placeholder="<%= direct_candidate %>">
+            </div>
+            <div class="form-group">
+                <label for="direct_candidate_fees">Direct Candidate Fees: </label>
+                <input type="text" class="form-control" id="direct_candidate_fees" name="direct_candidate_fees" placeholder="<%= direct_candidate_fees %>">
+            </div>
+            <h5><strong>Examiner Name :</strong> <span><%= examiner_name %></span></h5>
+            <h5><strong>Examiner Contact :</strong> <span><%= examiner_contact %></span></h5>
+            <div class="button-submit">
+                <button type="submit" class="btn btn-primary">Submit Changes</button>
+            </div>
+            </form>
+            <form class="initiateExaminerChange" action="/initiateExaminerChange" method="post" >
+                <div class="form-group">
+                    <input type="hidden" class="form-control" id="examid" name="examid" value="<%= examid %>">
+                    <input type="hidden" class="form-control" id="zone" name="zone" value="<%= zone %>">
+                    <div class="button-submit">
+                        <button type="submit" class="btn btn-primary">Change Examiner</button>
+                    </div>
+                </div>
+            </form>
+            </div>
+
+<%- include("partials/footer.ejs")%>

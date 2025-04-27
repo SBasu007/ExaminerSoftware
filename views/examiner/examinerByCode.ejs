@@ -1,0 +1,41 @@
+<%- include("../partials/header.ejs")%>
+<% if(bool === true){ %>
+    <h2>There is no examiner by this code.</h2>
+  <% } else {%>  
+    <div class="htable">
+        <h4>Examiner Code: <span class="h4"><%= code %></span></h4>
+        <h4>Name: <span class="h4"><%= name %></span></h4>
+        <h4>Phone: <span class="h4"><%= phone %></span></h4>
+        <h4>Address: <span class="h4"><%= address %></span></h4>
+        <h4>Zone: <span class="h4"><%= zone %></span></h4>
+        <form class="viewExamByExaminerCode" action="/viewExamByExaminerCode" method="post">
+          <div class="form-group">
+              <input type="hidden" class="form-control" id="code" name="code" value="<%= code %>">
+              <div class="button-submit">
+                  <button type="submit" class="btn btn-primary">Show all exams</button>
+              </div>
+          </div>
+      </form>
+      <form class="editExaminerInitiate" action="/editExaminerInitiate" method="post">
+        <div class="form-group">
+            <input type="hidden" class="form-control" id="code" name="code" value="<%= code %>">
+            <input type="hidden" class="form-control" id="name" name="name" value="<%= name %>">
+            <input type="hidden" class="form-control" id="phone" name="phone" value="<%= phone %>">
+            <input type="hidden" class="form-control" id="address" name="address" value="<%= address %>">
+            <input type="hidden" class="form-control" id="zone" name="zone" value="<%= zone %>">
+            <div class="button-submit">
+                <button type="submit" class="btn btn-primary">Edit Examiner Details </button>
+            </div>
+        </div>
+    </form>
+    <form class="deleteExaminer" action="/deleteExaminer" method="post">
+        <div class="form-group">
+            <input type="hidden" class="form-control" id="code" name="code" value="<%= code %>">
+            <div class="button-submit">
+                <button type="submit" class="btn btn-primary">Delete Examiner</button>
+            </div>
+        </div>
+    </form>
+    </div>    
+<% } %>  
+<%- include("../partials/footer.ejs")%>

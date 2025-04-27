@@ -1,0 +1,24 @@
+<%- include("../partials/header.ejs")%>
+      <div class="form">
+        <form class="editAgent" action="/editAgent" method="post">
+            <input type="hidden" class="form-control" id="code" name="ocode" value="<%= code %>">
+            <h3>Edit Agent Details</h3>
+            <div class="form-group">
+                <label for="code">Agent Code:</label>
+                <input type="text" class="form-control" id="ncode" name="ncode" placeholder="<%= code %>">
+            </div>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" name="name" maxlength="100" placeholder="<%= name %>">
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="text" class="form-control" id="phone" name="phone" maxlength="11" placeholder="<%= phone %>">
+            </div>
+            <div class="button-submit">
+                <button type="submit" class="btn btn-primary">Submit Changes</button>
+            </div>
+            </form>
+            </div>
+
+<%- include("../partials/footer.ejs")%>

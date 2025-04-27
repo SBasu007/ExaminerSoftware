@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExamTracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="/styles/index.css">
+    <link rel="stylesheet" href="/styles/entry_form.css">
+</head>
+<body>
+    <section name="navbar">
+        <nav class="navbar navbar-expand-md navbar-dark bg-blue fixed-top" aria-label="Fourth navbar example">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="#">Exam Tracker</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+        
+              <div class="collapse navbar-collapse" id="navbarsExample04">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                  <li class="nav-item dropdown school">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">School</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="/addSchool">Add School</a></li>
+                      <li><a class="dropdown-item" href="/viewSchool">View School</a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item dropdown examiner">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Examiner</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="/addExaminer">Add Examiner</a></li>
+                      <li><a class="dropdown-item" href="/viewExaminer">View Examiner</a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item dropdown examiner">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Agent</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="/addAgent">Add Agent</a></li>
+                      <li><a class="dropdown-item" href="/viewAgent">View Agent</a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item dropdown exam">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Exam</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="/pendingExams">View Pending</a></li>
+                      <li><a class="dropdown-item" href="/completedExams">View Completed</a></li>
+                      <li><a class="dropdown-item" href="/allExams">View All</a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item dropdown report">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Report</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="/examinerReportInitiate">Examiner</a></li>
+                      <li><a class="dropdown-item" href="/agentReportInitiate">Agent</a></li>
+                      <!-- <li><a class="dropdown-item" href="#">School</a></li>
+                      <li><a class="dropdown-item" href="#">3</a></li> -->
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+        </nav> 
+    </section>
+    <main>
+    <div class="background">
