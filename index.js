@@ -8,7 +8,7 @@ const db = new pg.Client({
   user: "postgres",
   host: "localhost",
   database: "CTSS",
-  password: "Shomi$2004",
+  password: "shomi777",
   port: 5432,
 });
 db.connect();
@@ -16,33 +16,88 @@ db.connect();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-app.get("/", (req,res) => {
-    res.render("index.ejs",{message:"Welcome"})
-  });
+app.get("/", async(req,res) => {
+  try {
+    // Query to fetch usernames from the PostgreSQL table
+    const query = 'SELECT username FROM users';  // Adjust table name if needed
+    const result = await db.query(query);
 
-const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];  
+    // Pass the usernames to the EJS template
+    res.render('login.ejs', {
+        usernames: result.rows,  // result.rows will be an array of objects
+    });
+} catch (err) {
+    console.error('Error fetching usernames:', err);
+    res.status(500).send('Server error');
+}
+  });
+app.post("/login", async (req, res) => {
+    const { username, password } = req.body;
+    const result = await db.query('SELECT username FROM users');
+    const u_result = await db.query("SELECT * FROM users WHERE username = $1", [username]);
+  
+    if (u_result.rows.length > 0) {
+      const p_result = await db.query("SELECT * FROM users WHERE password = $1", [password]);
+  
+      if (p_result.rows.length > 0) {
+        res.render("index.ejs", { message: "Welcome "+username });
+      } else {
+        res.render('login.ejs', {
+          usernames: result.rows,  // result.rows will be an array of objects
+          message:"Wrong password"
+      });
+      }
+    } else {
+      res.render('login.ejs', {
+        usernames: result.rows,  // result.rows will be an array of objects
+        message:"Username does not exist"
+    });
+    }
+  });
+app.get("/logout", (req, res) => {
+      res.redirect("/");
+    });
+ 
 
 //School
-app.get("/addSchool",(req,res) => {
-  res.render("school/add_school.ejs")
-});
-app.post("/addSchool", async (req,res)=>{
-  let scode = req.body.code;
-  let name = req.body.name;
-  let phone = req.body.phone;
-  let address = req.body.address;
-  let principal = req.body.principal;
-  let zone = req.body.zone;
-  let comm = req.body.commission;
+app.get('/getSchoolDetails', async (req, res) => {
+  const { code } = req.query;
+
   try {
-    await db.query(
-      "INSERT INTO school (code, name, phone, address, principal, zone, commission) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-      [scode, name, phone, address, principal, zone, comm]
+    // Query to get the details for the selected school code
+    const result = await db.query(
+      'SELECT * FROM school WHERE code = $1',
+      [code]
     );
-    res.render("school/add_school.ejs");
+    
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]); // Send back the school details
+    } else {
+      res.status(404).json({ error: 'School not found' });
+    }
   } catch (error) {
-    console.error('Error inserting into school table:', error);
-    res.render("index,ejs",{message:"Error adding school to database"})
+    console.error('Error fetching school details:', error);
+    res.status(500).json({ error: 'Failed to fetch school details' });
+  }
+});
+app.get('/getSchoolCodes', async (req, res) => {
+  const { query } = req.query;
+
+  try {
+    let result;
+    // Query the database for matching school codes
+    if (query){
+      result = await db.query(
+        'SELECT code FROM school WHERE code ILIKE $1', 
+        [`%${query}%`]
+      );
+    }else{
+      result = await db.query('SELECT code FROM school');
+    }
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching school codes:', error);
+    res.status(500).json({ error: 'Failed to fetch school codes' });
   }
 });
 app.get("/viewSchool",(req,res) => {
@@ -255,17 +310,73 @@ app.post("/deleteAgent", async (req,res)=>{
 app.get("/addExaminer",(req,res) => {
   res.render("examiner/add_examiner.ejs")
 });
-app.post("/addExaminer", async (req,res)=>{
-  let e_code = req.body.code;
-  let name = req.body.name;
-  let phone = req.body.phone;
-  let address = req.body.address;
-  let zone = req.body.zone;
-  await db.query("INSERT INTO examiner (code, name, phone, address, zone) VALUES ($1,$2,$3,$4,$5)",[e_code, name, phone, address, zone]);
-res.render("examiner/add_examiner.ejs")
+app.post("/addExaminer", async (req, res) => {
+  try {
+    let e_code = req.body.code;
+    let name = req.body.name;
+    let phone = req.body.phone;
+    let phone2 = req.body.phone2;
+    let address = req.body.address;
+    let address2 = req.body.address2;
+
+    await db.query(
+      "INSERT INTO examiner (code, name, phone, phone2, address1, address2) VALUES ($1, $2, $3, $4, $5, $6)",
+      [e_code, name, phone, phone2, address, address2]
+    );
+
+    res.render("examiner/add_examiner.ejs", { message: "Added examiner successfully" });
+  } catch (error) {
+    console.error("Error adding examiner:", error);
+    res.render("examiner/add_examiner.ejs", { message: "Failed to add examiner. Please try again." });
+  }
 });
-app.get("/viewExaminer",(req,res) => {
-  res.render("examiner/view_examiner.ejs")
+// Fetch list of examiner codes matching query
+app.get('/getExaminerCodes', async (req, res) => {
+  const { query } = req.query;
+  try {
+    let result;
+    if (query) {
+      result = await db.query(
+        'SELECT code FROM examiner WHERE code ILIKE $1 LIMIT 10',
+        [`${query}%`]
+      );
+    } else {
+      result = await db.query(
+        'SELECT code FROM examiner LIMIT 10'
+      );
+    }
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Database error:', error);  // Always log the error
+    res.status(500).json({ error: 'Failed to fetch examiner codes' });
+  }
+});
+
+// Fetch full examiner details by code
+app.get('/getExaminerDetails', async (req, res) => {
+  const { e_code } = req.query;
+  try {
+    const result = await db.query(
+      'SELECT * FROM examiner WHERE code = $1',
+      [e_code]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Examiner not found' });
+    }
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch examiner details' });
+  }
+});
+
+app.get("/viewExaminer", async (req,res) => {
+  try{
+    const result = await db.query("SELECT * FROM examiner");
+    res.render("examiner/view_all_examiner.ejs",{display: result.rows, bool:false})
+  }catch(err){
+    console.log("Wump wump")
+  }
 });
 app.post("/viewExaminerByCode", async (req,res)=>{
   let code = req.body.code;
@@ -289,112 +400,230 @@ app.post("/viewExaminerByZone", async (req,res) =>{
     res.render("examiner/examinerByZone.ejs",{bool : true});
   }
 })
-app.post("/editExaminerInitiate", async (req,res)=>{
-  let ecode = req.body.code;
-  let name = req.body.name;
-  let phone = req.body.phone;
-  let address = req.body.address;
-  let zone = req.body.zone;
-  res.render("examiner/edit_examiner.ejs",{code: ecode, name: name, phone: phone, address: address, zone: zone})
-})
-app.post("/editExaminer", async (req, res) => {
-  let o_code = req.body.ocode;
-  let n_code = req.body.ncode;
-  let name = req.body.name;
-  let phone = req.body.phone;
-  let address = req.body.address;
-  let zone = req.body.zone;
-
-  let field = [];
-  let values = [];
-  let paramCount = 1;
-
-  if (n_code) {
-      field.push(`code = $${paramCount}`);
-      values.push(n_code);
-      paramCount++;
-  }
-  if (name) {
-      field.push(`name = $${paramCount}`);
-      values.push(name);
-      paramCount++;
-  }
-  if (phone) {
-      field.push(`phone = $${paramCount}`);
-      values.push(phone);
-      paramCount++;
-  }
-  if (address) {
-      field.push(`address = $${paramCount}`);
-      values.push(address);
-      paramCount++;
-  }
-  if (zone) {
-      field.push(`zone = $${paramCount}`);
-      values.push(zone);
-      paramCount++;
-  }
-
-  values.push(o_code); // Add the original code as the last parameter
-
-  if (field.length === 0) {
-      console.log("No change");
-      res.render("examiner/view_examiner.ejs");
-      return; // Exit early if no fields to update
-  }
-
-  // Construct the SQL query dynamically
-  let setClause = field.join(', ');
-  let queryText = `UPDATE examiner SET ${setClause} WHERE code = $${paramCount}`;
+app.get("/editExaminer",(req,res) => {
+  res.render("examiner/edit_examiner.ejs")
+});
+app.post('/editExaminer', async (req, res) => {
+  const { code, name, phone, phone2, address, address2 } = req.body;
 
   try {
-      await db.query(queryText, values);
-      res.render("examiner/view_examiner.ejs");
+      const result = await db.query(
+          `UPDATE examiner
+           SET name = $1,
+               phone = $2,
+               phone2 = $3,
+               address1 = $4,
+               address2 = $5
+           WHERE code = $6`,
+          [name, phone, phone2, address, address2, code]
+      );
+
+      if (result.rowCount === 0) {
+          // Examiner not found
+          return res.render('examiner/edit_examiner.ejs', { error_message: 'Examiner not found.' });
+      }
+
+      return res.render('examiner/edit_examiner.ejs', { error_message: 'Successfully edited.' });
   } catch (err) {
-      console.error("Error updating school:", err);
-      // Handle error appropriately, possibly show an error page
-      res.status(500).send("Error updating school");
+      console.error('Error updating examiner:', err);
+      return res.render('examiner/edit_examiner.ejs', { error_message: 'Error occured' });
   }
 });
+
 app.post("/deleteExaminer", async (req,res)=>{
   let code = req.body.code;
-  await db.query("DELETE FROM examiner WHERE examiner.code = $1",[code])
-  res.render("index.ejs",{message:"Examiner Deleted Successfully"})
+  try{
+    await db.query("DELETE FROM examiner WHERE examiner.code = $1",[code])
+    return res.render('examiner/edit_examiner.ejs', { error_message: 'Deleted successfully' });
+  }catch(err){
+    return res.render('examiner/edit_examiner.ejs', { error_message: 'Error occured: '+err });
+  }
 })
 
 
 //Exam
-app.post("/createExamPage", (req, res) => {
-  let school_code = req.body.code;
-  res.render("create_exam.ejs",{code : school_code})
+app.get("/addExam", (req, res) => {
+  res.render("exam/create_exam.ejs")
 });
-app.post("/createExam", async (req,res)=>{
-  try{
-    let scode = req.body.school_code;
-    let session = req.body.session;
-    let month = req.body.month;
-    let date = req.body.date;
-    let acode = req.body.agent_code;
-    let forms = req.body.forms;
-    let collection = req.body.collection;
+app.get("/addMoreExam", (req, res) => {
+  res.render("exam/find_Exam.ejs")
+});
+app.get("/editExamPage", (req, res) => {
+  res.render("exam/find_editExam.ejs")
+});
+app.post("/editExamPage",async (req,res)=>{
+  const {session, code} = req.body;
+  const result = await db.query("SELECT * FROM exam WHERE session = $1 AND school_code = $2",[session,code]);
+  console.log(session)
+  console.log(code)
+  if (result.rows.length == 0){
+    res.render("exam/find_editExam.ejs",{error_message:"No such exam created"});
+  }else{
+    res.render("exam/edit_exam.ejs",{examData : result.rows[0]});
+  }
+})
+app.post("/editExam", async (req, res) => {
+  try {
+    let id = req.body.id;
+let session = req.body.session;
+let scode = req.body.code;
+let date = req.body.date;
+let ecode = req.body.e_code;
+let fees = req.body.fees;
+let ta = req.body.TA;
+let direct_candidate = req.body.dc;
+let direct_candidate_fees = req.body.direct_candidate_fees;
+
+// Check if any required field is missing (excluding examiner_code)
+let isIncomplete = (
+  !session ||
+  !scode ||
+  !date ||
+  !fees ||
+  !ta ||
+  !direct_candidate ||
+  !direct_candidate_fees
+);
+
+if (isIncomplete) {
+  // Only update examiner_code and set conducted = false
+  await db.query(
+    `UPDATE exam SET 
+      examiner_code = $1,
+      conducted = false
+    WHERE id = $2`,
+    [ecode, id]
+  );
+} else {
+  // Update full row and set conducted = true
+  await db.query(
+    `UPDATE exam SET
+      session = $1,
+      examiner_code = $2,
+      direct_candidate = $3,
+      TA = $4,
+      fees = $5,
+      school_code = $6,
+      date = $7,
+      direct_candidate_fees = $8,
+      conducted = true
+    WHERE id = $9`,
+    [
+      session,
+      ecode,
+      direct_candidate,
+      ta,
+      fees,
+      scode,
+      date || null,
+      direct_candidate_fees,
+      id
+    ]
+  );
+}
+
+console.log(id);
+res.render("exam/find_editExam.ejs", { error_message: "Exam edited successfully" });
+
     
-    let result = await db.query("INSERT INTO exam (month, session, examiner_assigned, examiner_code, direct_candidate, food, transport,fees, school_code,conducted, date,examiner_paid,direct_candidate_fees,agent_code,forms,collection) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING id",[month, session, false, null, 0,0,0,0,scode,false,date,false,0,acode,forms,collection]);
-    let exam_id = result.rows[0].id;
-    let school_result = await db.query("SELECT school.commission FROM school WHERE school.code = $1",[scode]);
-    let commission_p = school_result.rows[0].commission;
-    let commission_amt = collection*(commission_p/100);
-    const d = new Date();
-    let currentMonth = months[d.getMonth()];
-    let currentYear = d.getFullYear();
-    let currentDay = d.getDate();
-    let currentDate = currentDay+'.'+(d.getMonth()+1)+'.'+currentYear;
-    await db.query("INSERT INTO school_fees (agent_code,exam_id,school_code,date,month,agent_commission,agent_paid,month_no) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",[acode,exam_id,scode,currentDate,currentMonth,commission_amt,false,d.getMonth()]);
-    res.render("index.ejs",{message:"Exam created successfully"})
-  }catch(error)
-  {
-    res.render("index.ejs",{message:"Error creating exam"})
+  } catch (error) {
+    console.error('Error editing exam:', error);
+    res.render("exam/find_editExam.ejs", { error_message: "Error editing exam" });
   }
 });
+app.post("/deleteExam", async (req,res)=>{
+  let code = req.body.id;
+  try{
+    await db.query("DELETE FROM exam WHERE exam.id = $1",[code])
+    return res.render('exam/edit_exam.ejs', { error_message: 'Deleted successfully' });
+  }catch(err){
+    return res.render('exam/edit_exam.ejs', { error_message: 'Error occured: '+err });
+  }
+})
+
+app.post("/createExam", async (req, res) => {
+  try {
+    let id = req.body.id;
+    let scode = req.body.code;
+    let session = req.body.session;
+    let date = req.body.date;
+    let ecode = req.body.e_code;
+    let fees = req.body.fees;
+    let ta = req.body.TA;
+    let direct_candidate = req.body.dc;
+    let direct_candidate_fees = req.body.direct_candidate_fees;
+    let conducted = false
+    if (ta != undefined){
+      conducted = true
+      await db.query(
+        `UPDATE exam SET
+          session = $1, 
+          examiner_code = $2, 
+          direct_candidate = $3, 
+          TA = $4, 
+          fees = $5, 
+          school_code = $6, 
+          conducted = $7, 
+          date = $8, 
+          examiner_paid = $9, 
+          direct_candidate_fees = $10, 
+          students = $11
+        WHERE id = $12`,
+        [
+          session,               // $1
+          ecode,                 // $2
+          direct_candidate,      // $3
+          ta,                    // $4
+          fees,                  // $5
+          scode,                 // $6
+          conducted,             // $7
+          date || null,          // $8 (if date provided use it else keep NULL)
+          false,                 // $9 examiner_paid - always false initially
+          direct_candidate_fees, // $10
+          0,                     // $11 students initially 0
+          id                  // $12 (school_code to find the record)
+        ]
+      );
+      res.render("exam/update_exam.ejs", { error_message: "Exam updated successfully" });
+    }else{
+      await db.query(
+        `INSERT INTO exam (
+          session, examiner_code, direct_candidate, TA, fees,
+          school_code, conducted, date, examiner_paid, direct_candidate_fees, students
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+        [
+          session,            // $1
+          ecode,              // $2
+          direct_candidate,   // $3
+          ta,                 // $4
+          fees,               // $5
+          scode,              // $6
+          conducted,              // $7 conducted - always false initially
+          date || null,       // $8 if date provided use it else keep NULL
+          false,              // $9 examiner_paid - always false initially
+          direct_candidate_fees, // $10
+          0                   // $11 students initially 0
+        ]
+      );
+  
+      res.render("exam/create_exam.ejs", { error_message: "Exam created successfully" });
+    }
+    
+  } catch (error) {
+    console.error('Error creating exam:', error);
+    res.render("exam/create_exam.ejs", { error_message: "Error creating exam" });
+  }
+});
+app.post("/fetchExam", async(req,res) => {
+  const {session, code} = req.body;
+  const result = await db.query("SELECT * FROM exam WHERE session = $1 AND school_code = $2",[session,code]);
+  if (result.rows.length == 0){
+    res.render("exam/find_exam.ejs",{error_message:"No such exam created"});
+  }else{
+    res.render("exam/update_exam.ejs",{examData : result.rows[0]});
+  }
+})
+
 app.post("/viewExamBySchoolCode", async (req,res)=>{
   let s_code = req.body.code;
   try{
@@ -453,102 +682,7 @@ app.post("/editExamInitiate", async (req,res)=>{
   let result = await db.query("SELECT school.zone FROM exam JOIN school ON school.code = exam.school_code WHERE exam.id = $1",[examid])
   res.render("edit_exam.ejs",{examid:examid, session: session, month: month, date: date, examiner_name: examiner_name, examiner_contact:examiner_contact, zone:result.rows[0].zone, fees: req.body.fees, food: req.body.food, travel: req.body.travel, direct_candidate: req.body.direct_candidate, direct_candidate_fees: req.body.direct_candidate_fees,agent_code:req.body.agent_code, forms:req.body.forms,collection:req.body.collection})
 })
-app.post("/editExam",async (req, res) => {
-  let examid = req.body.examid;
-  let session = req.body.session;
-  let month = req.body.month;
-  let date = req.body.date;
-  let fees = req.body.fees;
-  let food = req.body.food;
-  let travel = req.body.travel;
-  let direct_candidate = req.body.direct_candidate;
-  let direct_candidate_fees = req.body.direct_candidate_fees;
-  let agent_code=req.body.agent_code;
-  let forms=req.body.forms;
-  let collection=req.body.collection;
 
-
-  let field = [];
-  let values = [];
-  let paramCount = 1;
-
-  if (session) {
-      field.push(`session = $${paramCount}`);
-      values.push(session);
-      paramCount++;
-  }
-  if (month) {
-      field.push(`month = $${paramCount}`);
-      values.push(month);
-      paramCount++;
-  }
-  if (date) {
-      field.push(`date = $${paramCount}`);
-      values.push(date);
-      paramCount++;
-  }
-  if (fees) {
-    field.push(`fees = $${paramCount}`);
-    values.push(fees);
-    paramCount++;
-  }
-  if (food) {
-    field.push(`food = $${paramCount}`);
-    values.push(food);
-    paramCount++;
-  }
-  if (travel) {
-    field.push(`transport = $${paramCount}`);
-    values.push(travel);
-    paramCount++;
-  }
-  if (direct_candidate) {
-    field.push(`direct_candidate = $${paramCount}`);
-    values.push(direct_candidate);
-    paramCount++;
-  }
-  if (direct_candidate_fees) {
-    field.push(`direct_candidate_fees = $${paramCount}`);
-    values.push(direct_candidate_fees);
-    paramCount++;
-  }
-  if (agent_code) {
-    field.push(`agent_code = $${paramCount}`);
-    values.push(agent_code);
-    paramCount++;
-  }
-  if (forms) {
-    field.push(`forms = $${paramCount}`);
-    values.push(forms);
-    paramCount++;
-  }
-  if (collection) {
-    field.push(`collection = $${paramCount}`);
-    values.push(collection);
-    paramCount++;
-  }
-
-  values.push(examid); // Add the original code as the last parameter
-
-  if (field.length === 0) {
-      console.log("No change");
-      res.render("index.ejs",{message:"No changes added"});
-      return; // Exit early if no fields to update
-  }
-
-  // Construct the SQL query dynamically
-  let setClause = field.join(', ');
-  let queryText = `UPDATE exam SET ${setClause} WHERE id = $${paramCount}`;
-
-  try {
-      await db.query(queryText, values);
-      res.render("index.ejs",{message: "Edited Successfully"});
-  } catch (err) {
-      console.error("Error updating school:", err);
-      // Handle error appropriately, possibly show an error page
-      res.status(500).send("Error updating school");
-  }
-});
 app.post("/initiateExaminerChange", async (req, res) =>{
   let exam_id = req.body.examid;
   let zone = req.body.zone;
@@ -573,15 +707,15 @@ app.post("/changeExamStatus", async(req,res)=>{
   }
 })
 app.get("/pendingExams", async(req,res)=>{
-let result = await db.query("SELECT school.name AS s_name,school.phone AS s_contact,school.address,exam.*,examiner.name,examiner.phone FROM exam LEFT JOIN examiner ON exam.examiner_code = examiner.code JOIN school ON exam.school_code = school.code WHERE exam.conducted = false")
+let result = await db.query("SELECT school.code as sch_code, school.name AS s_name,school.add1,exam.*,examiner.name,examiner.phone FROM exam LEFT JOIN examiner ON exam.examiner_code = examiner.code JOIN school ON exam.school_code = school.code WHERE exam.conducted = false")
 res.render("all_exams.ejs",{bool:false,message:"pending ",display:result.rows})
 })
 app.get("/completedExams", async(req,res)=>{
-  let result = await db.query("SELECT school.name AS s_name,school.phone AS s_contact,school.address,exam.*,examiner.name,examiner.phone FROM exam LEFT JOIN examiner ON exam.examiner_code = examiner.code JOIN school ON exam.school_code = school.code WHERE exam.conducted = true")
+  let result = await db.query("SELECT school.code as sch_code, school.name AS s_name,school.add1,exam.*,examiner.name,examiner.phone FROM exam LEFT JOIN examiner ON exam.examiner_code = examiner.code JOIN school ON exam.school_code = school.code WHERE exam.conducted = true")
   res.render("all_exams.ejs",{bool:false,message:"completed ",display:result.rows})
   })
 app.get("/allExams", async(req,res)=>{
-    let result = await db.query("SELECT school.name AS s_name,school.phone AS s_contact,school.address,exam.*,examiner.name,examiner.phone FROM exam LEFT JOIN examiner ON exam.examiner_code = examiner.code JOIN school ON exam.school_code = school.code")
+  let result = await db.query("SELECT school.code as sch_code, school.name AS s_name,school.add1,exam.*,examiner.name,examiner.phone FROM exam LEFT JOIN examiner ON exam.examiner_code = examiner.code JOIN school ON exam.school_code = school.code")
     res.render("all_exams.ejs",{bool:false,message:"",display:result.rows})
     }) 
 app.post("/deleteExam", async (req,res)=>{
@@ -594,27 +728,27 @@ app.post("/deleteExam", async (req,res)=>{
 app.get("/examinerReportInitiate",async (req,res)=>{
   res.render("report/examiner_report_enter.ejs")
 })
-app.get("/agentReportInitiate",async (req,res)=>{
-  res.render("report/agent_report_enter.ejs")
-})
+// app.get("/agentReportInitiate",async (req,res)=>{
+//   res.render("report/agent_report_enter.ejs")
+// })
 app.post("/examinerReportByCode",async (req,res)=>{
   let examiner_code = req.body.code
-  let result = await db.query("SELECT school.name, school.address, exam.*, examiner.name AS exam_taker FROM exam JOIN school ON school.code = exam.school_code JOIN examiner ON exam.examiner_code = examiner.code WHERE exam.examiner_code = $1 AND exam.conducted = true ORDER BY exam.examiner_paid ASC;",[examiner_code])
+  let result = await db.query("SELECT school.name, school.add1, exam.*, examiner.name AS exam_taker FROM exam JOIN school ON school.code = exam.school_code JOIN examiner ON exam.examiner_code = examiner.code WHERE exam.examiner_code = $1 AND exam.conducted = true ORDER BY exam.examiner_paid ASC;",[examiner_code])
   if (result.rows.length === 0){
     res.render("report/examinerReportByCode.ejs",{bool:true})
   }else{
     res.render("report/examinerReportByCode.ejs",{display:result.rows,bool:false})
   }
 })
-app.post("/agentReportByCode",async (req,res)=>{
-  let agent_code = req.body.code
-  let result = await db.query("SELECT agent.name AS agentname,agent.contact, school.name AS schoolname, school.zone, exam.session, exam.forms, exam.collection, school_fees.date, school_fees.month, school_fees.agent_commission,school_fees.agent_paid,school_fees.month_no,school_fees.id FROM school_fees JOIN agent ON school_fees.agent_code = agent.code JOIN exam ON exam.id = school_fees.exam_id JOIN school ON school.code = school_fees.school_code WHERE agent.code = $1 ORDER BY school_fees.agent_paid ASC", [agent_code]);
-  if (result.rows.length === 0){
-    res.render("report/agentReportByCode.ejs",{bool:true})
-  }else{
-    res.render("report/agentReportByCode.ejs",{display:result.rows,bool:false})
-  }
-})
+// app.post("/agentReportByCode",async (req,res)=>{
+//   let agent_code = req.body.code
+//   let result = await db.query("SELECT agent.name AS agentname,agent.contact, school.name AS schoolname, school.zone, exam.session, exam.forms, exam.collection, school_fees.date, school_fees.month, school_fees.agent_commission,school_fees.agent_paid,school_fees.month_no,school_fees.id FROM school_fees JOIN agent ON school_fees.agent_code = agent.code JOIN exam ON exam.id = school_fees.exam_id JOIN school ON school.code = school_fees.school_code WHERE agent.code = $1 ORDER BY school_fees.agent_paid ASC", [agent_code]);
+//   if (result.rows.length === 0){
+//     res.render("report/agentReportByCode.ejs",{bool:true})
+//   }else{
+//     res.render("report/agentReportByCode.ejs",{display:result.rows,bool:false})
+//   }
+// })
 app.post("/viewExamReportDetails",async (req,res)=>{
   let exam_code = req.body.code
   let result = await db.query("SELECT school.name, exam.*, examiner.name AS exam_taker,examiner.code AS examinercode FROM exam JOIN school ON school.code = exam.school_code JOIN examiner ON exam.examiner_code = examiner.code WHERE exam.id = $1",[exam_code])
@@ -690,25 +824,19 @@ app.post("/editExamReport",async (req, res) => {
   }
 });
 app.post("/generateReport",async (req, res) =>{
-  let mcount = req.body.maxCount;
-  let count = req.body.count;
-  if (count > mcount){
-    console.log("Exam count exceeds limit");
-    res.render("index.ejs",{message:"Exam count exceeds limit"})
+      let d1 = req.body.date1
+      let d2 = req.body.date2
+      let code = req.body.code
+      let result = await db.query("SELECT school.code, school.name, exam.*, examiner.name AS exam_taker, examiner.phone FROM exam JOIN school ON school.code = exam.school_code JOIN examiner ON exam.examiner_code = examiner.code WHERE exam.date BETWEEN $1 AND $2 AND exam.examiner_code = $3",[d1,d2,code])
+      const d = result.rows;
+      for (let row of d){
+        await db.query("UPDATE exam SET examiner_paid = true WHERE id = $1", [row.id]);
+      }
+      
+    
+      res.render("report/report.ejs", { count: d.length, display: d, date: { d1, d2 } });
   }
-  else{
-    var data = []
-    for (var i= 0;i<count;i++){
-      let name = "examid"+i;
-      let exam_id = req.body[name]; 
-      let result = await db.query("SELECT school.name, exam.*, examiner.name AS exam_taker,examiner.phone FROM exam JOIN school ON school.code = exam.school_code JOIN examiner ON exam.examiner_code = examiner.code WHERE exam.id = $1",[exam_id])
-      data.push(result.rows[0])
-      var d = new Date();
-      await db.query("UPDATE exam SET examiner_paid = true WHERE exam.id = $1",[exam_id])
-    }
-    res.render("report/report.ejs",{count:count,display: data, date:d})
-  }
-})
+)
 app.post("/generateAgentReport", async(req,res)=>{
   let mcount = req.body.maxCount;
   let month = req.body.month;

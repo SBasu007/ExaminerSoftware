@@ -1,0 +1,29 @@
+<%- include("../partials/header.ejs")%>
+<% if(bool === true){ %>
+    <h2>There is no examiner in this zone.</h2>
+  <% } else {%> 
+    <div class=" container">
+      <h3>List of all examiners</h3>
+    <table class="table table-primary table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Examiner Code</th>
+            <th scope="col">Name</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Address</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% for(var i=0;i<display.length;i++) { %>  
+          <tr>
+            <td><%= display[i].code %></td>
+            <td><%= display[i].name %></td>
+            <td><%= display[i].phone %></td>
+            <td><%= display[i].address1 %></td>
+          </tr>
+        <% } %>
+        </tbody>
+      </table>
+    </div> 
+<% } %>  
+<%- include("../partials/footer.ejs")%>

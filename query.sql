@@ -13,27 +13,23 @@ CREATE TABLE examiner(
     code TEXT PRIMARY KEY NOT NULL,
     name VARCHAR(100),
     phone VARCHAR(11),
-    address VARCHAR(100),
-    zone CHAR(1)
+    phone2 TEXT,
+    address1 TEXT,
+    address2 TEXT
 );
 CREATE TABLE exam(
     id SERIAL PRIMARY KEY,
-    month VARCHAR(100),
     session VARCHAR(50),
-    examiner_assigned BOOLEAN,
     examiner_code TEXT REFERENCES examiner(code),
     direct_candidate INT,
-    food FLOAT,
-    transport FLOAT,
+    TA FLOAT,
     fees FLOAT,
     school_code TEXT REFERENCES school(code),
     conducted BOOLEAN,
-    date VARCHAR(100),
+    date DATE,
     examiner_paid BOOLEAN,
     direct_candidate_fees FLOAT,
-    agent_code TEXT REFERENCES agent(code),
-    forms INT,
-    collection FLOAT
+    students INT
 );
 CREATE TABLE agent(
 	id SERIAL,

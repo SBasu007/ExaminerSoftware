@@ -36,16 +36,14 @@
     flex-direction: column;
     align-items: center;
   }
-  .table{
-    margin:20px;
-  }
+  
   .background{
     background-color: #9c6beb;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding:20px;
+    padding-top:60px;
   }
   .status-buttons-danger{
       background-color: #dc3545;
@@ -64,4 +62,10 @@
 }
 .h4{
   font-weight:350;
+}
+.form{
+  background-color: rgb(205, 231, 253);
+  width:30vw;
+  margin: auto;
+  padding:20px;
 }
