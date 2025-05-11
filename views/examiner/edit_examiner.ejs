@@ -42,7 +42,7 @@
         </div>
     </form>
     <form class="examiner" action="/deleteExaminer" method="post">
-        <input type="hidden" id="code" name="code" required>
+        <input type="hidden" id="d_code" name="d_code" >
         <div class="button-submit">
             <button type="submit" class="btn btn-danger">Delete</button>
         </div>
@@ -62,12 +62,14 @@
                 if (response.ok) {
                     const data = await response.json();
                     document.getElementById('name').value = data.name || '';
+                    document.getElementById('d_code').value = code || '';
                     document.getElementById('phone').value = data.phone || '';
                     document.getElementById('phone2').value = data.phone2 || '';
                     document.getElementById('address').value = data.address1 || '';
                     document.getElementById('address2').value = data.address2 || '';
                 } else {
                     // Clear fields if not found
+                    document.getElementById('d_code').value = '';
                     document.getElementById('name').value = '';
                     document.getElementById('phone').value = '';
                     document.getElementById('phone2').value = '';
