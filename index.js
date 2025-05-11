@@ -431,7 +431,8 @@ app.post('/editExaminer', async (req, res) => {
 });
 
 app.post("/deleteExaminer", async (req,res)=>{
-  let code = req.body.code;
+  let code = req.body.d_code;
+  console.log(code)
   try{
     await db.query("DELETE FROM examiner WHERE examiner.code = $1",[code])
     return res.render('examiner/edit_examiner.ejs', { error_message: 'Deleted successfully' });
