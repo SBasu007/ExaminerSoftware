@@ -5,18 +5,8 @@
     <form class="examinerReportByCode" action="/examinerReportByCode" method="post">
         <div class="form-group">
             <label for="code">Enter code for particular Examiner: </label>
-            <input type="text" class="form-control" id="code" name="code">
-            <div class="button-submit">
-                <button type="submit" class="btn btn-primary">Submit</button>
-              </div>
-        </div>
-    </form>
-</div>
-<div class="testtable">
-    <form class="viewExaminerByZone" action="/viewExaminerByZone" method="post">
-        <div class="form-group">
-            <label for="zone">Enter name of Examiner: </label>
-            <input type="text" class="form-control" id="name" name="name">
+           <input type="text"  id="e_code" name="e_code" list="e-code-list" required autocomplete="off">
+           <ul id="e-code-list" class="custom-dropdown-code"></ul>
             <div class="button-submit">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
@@ -24,4 +14,60 @@
     </form>
 </div>
 </div>
+<script>
+
+    // Examiner Code Handling
+const eCodeInput = document.getElementById('e_code');
+const eCodeList = document.getElementById('e-code-list');
+
+
+// Fetch examiner details on page load if code is pre-filled
+if (eCodeInput.value) {
+  fetchExaminerDetails(eCodeInput.value);
+}
+
+// Fetch codes and details based on user input
+eCodeInput.addEventListener('input', function () {
+  const query = this.value;
+
+  if (query.length <= 5) {
+    fetchExaminerCodes(query); // Fetch codes dynamically
+  }
+});
+
+// Fetch all codes when input is focused and empty
+eCodeInput.addEventListener('focus', function () {
+  if (this.value === '') {
+    eCodeList.style.display = 'block';
+    fetchExaminerCodes(); // Fetch all codes if input is blank
+  }
+});
+
+function fetchExaminerCodes(query = '') {
+  fetch(`/getExaminerCodes?query=${query}`)
+    .then(response => response.json())
+    .then(data => {
+      eCodeList.innerHTML = ''; // Clear existing options
+      data.forEach(code => {
+        const listItem = document.createElement('li');
+        listItem.textContent = code.code;
+        listItem.addEventListener('click', function () {
+          eCodeInput.value = code.code; // Set input value on click
+          eCodeList.style.display = 'none'; // Hide dropdown after selection
+          fetchExaminerDetails(code.code); // Fetch details after selecting a code
+        });
+        eCodeList.appendChild(listItem); // Add new list item
+      });
+      eCodeList.style.display = data.length ? 'block' : 'none'; // Show or hide dropdown based on results
+    })
+    .catch(error => console.error('Error fetching examiner codes:', error));
+}
+
+// Hide dropdown when clicking outside the input field
+document.addEventListener('click', function (event) {
+  if (!event.target.closest('#e_code') && !event.target.closest('#e-code-list')) {
+    eCodeList.style.display = 'none'; // Hide dropdown if clicked outside
+  }
+});
+</script>
 <%- include("../partials/footer.ejs")%>
