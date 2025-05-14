@@ -733,7 +733,7 @@ app.get("/examinerReportInitiate",async (req,res)=>{
 //   res.render("report/agent_report_enter.ejs")
 // })
 app.post("/examinerReportByCode",async (req,res)=>{
-  let examiner_code = req.body.code
+  let examiner_code = req.body.e_code
   let result = await db.query("SELECT school.name, school.add1, exam.*, examiner.name AS exam_taker FROM exam JOIN school ON school.code = exam.school_code JOIN examiner ON exam.examiner_code = examiner.code WHERE exam.examiner_code = $1 AND exam.conducted = true ORDER BY exam.examiner_paid ASC;",[examiner_code])
   if (result.rows.length === 0){
     res.render("report/examinerReportByCode.ejs",{bool:true})
